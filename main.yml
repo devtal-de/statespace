@@ -1,0 +1,105 @@
+---
+- hosts: serviceding.in.devtal.de
+  vars_files:
+    - vars/http.yml
+  tasks: 
+  - name: install update script
+    copy: 
+      src: "statespace_update"
+      dest: "/usr/local/bin/statespace_update"
+      force: yes
+      mode: 0755
+
+  - name: create update user
+    user:
+      name: statespace
+      group: nogroup
+      system: yes
+      createhome: no
+      home: /tmp
+
+  - name: install update wgetrc
+    template: 
+      src: "statespace-wgetrc.j2"
+      dest: "/usr/local/etc/statespace-wgetrc"
+      force: yes
+      owner: statespace
+      group: root
+      mode: 0460
+
+  - name: edit crontab
+    lineinfile: 
+      dest: /etc/crontab
+      line: "{{item}}"
+      state: present
+    with_items:
+      - "*/5 *\t* * *\tstatespace\t/usr/local/bin/statespace_update 192.168.1.4"
+      - "0 */2\t* * *\tstatespace\t/usr/local/bin/statespace_update 192.168.1.4 -f"
+
+- hosts: moon.devtal.de
+  vars_files:
+    - vars/http.yml
+  tasks:
+  - name: install htpasswd ansible module requirement passlib
+    pip:
+      name: passlib
+      state: present
+      extra_args: --user
+
+  - htpasswd:
+      path: /home/thoto/public_html/statespace/.htpasswd
+      name: monika
+      password: "{{http_pass}}"
+      owner: thoto
+      group: www-data
+      mode: 0640
+
+  - name: copy htaccess
+    copy: 
+      src: "htaccess"
+      dest: "/home/thoto/public_html/statespace/.htaccess"
+      force: yes
+      owner: thoto
+      group: www-data
+      mode: 0640
+
+  - name: ensure state.txt present and has correct permissions
+    file:
+      dest: "/home/thoto/public_html/statespace/state.txt"
+      state: file
+      owner: thoto
+      group: www-data
+      mode: 0660
+
+  - name: copy library
+    copy: 
+      src: "spaceopen2.inc.php"
+      dest: "{{item}}"
+      force: yes
+      owner: thoto
+      group: www-data
+      mode: 0755
+    with_items:
+      - "/home/thoto/public_html/statespace/spaceopen2.inc.php"
+      - "/var/www/devtal.de/htdocs/blog/wp-content/plugins/spaceopenstatus/spaceopen2.inc.php"
+
+  - name: copy change.php and state.php
+    copy: 
+      src: "{{item}}"
+      dest: "/home/thoto/public_html/statespace/{{item}}"
+      force: yes
+      owner: thoto
+      group: www-data
+      mode: 0755
+    with_items:
+      - "change.php"
+      - "state.php"
+
+  - name: create empty index file
+    file:
+      dest: "/home/thoto/public_html/statespace/index.html"
+      state: file
+      owner: thoto
+      group: www-data
+      mode: 0644
+

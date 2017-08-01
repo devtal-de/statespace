@@ -1,0 +1,30 @@
+#!/bin/sh
+[ -z "${1}" ] && exit 1
+host="${1}"
+[ ! -z "${2}" -a "x-f" = "x${2}" ] && force=1 || force=0
+
+statespace_update_c(){
+	local state="${1}"
+	local url="http://devtal.de/~thoto/statespace/change.php?state=${state}"
+	[ ! -z "${2}" ] && url="${url}&host=${2}"
+
+	/usr/bin/wget --config /usr/local/etc/statespace-wgetrc "${url}" -q -O -
+	local ret=$?
+	if [ $ret -ne 0 ] ; then
+		echo "wget failed with ${ret}" >> /tmp/statespace/log
+		return 1
+	fi
+	return 0
+}
+
+[ -d /tmp/statespace/ ] || mkdir /tmp/statespace
+file="/tmp/statespace/${host}"
+[ -f "/tmp/statespace/${host}" ] || touch "/tmp/statespace/${host}"
+
+oldstate=$(cat "${file}")
+newstate=$(ping -c 1 "${host}" >/dev/null 2>&1 && echo "OK" || echo "CRITICAL")
+# newstate=$(ping -c 1 "${host}" >/dev/null 2>&1 && echo "CRITICAL" || echo "OK")
+
+[ "x${oldstate}" != "x${newstate}" -o ${force} -eq 1 ]  && \
+	statespace_update_c ${newstate} ${host} && \
+	echo "${newstate}" > "${file}"

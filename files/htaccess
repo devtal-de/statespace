@@ -1,0 +1,13 @@
+<Files "change.php">
+	AuthType Basic
+	AuthName "Authentication required"
+	AuthBasicProvider file
+	AuthUserFile /home/thoto/public_html/statespace/.htpasswd
+	Require valid-user
+</Files>
+# SSLCACertificateFile /...
+#SSLCADNRequestPath /home/thoto/public_html/statespace/certs/
+#SSLRequireSSL
+#SSLVerifyClient require
+#SSLUserName SSL_CLIENT_S_DN_CN
+#Require user user
