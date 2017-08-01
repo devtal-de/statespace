@@ -5,7 +5,7 @@ host="${1}"
 
 statespace_update_c(){
 	local state="${1}"
-	local url="http://devtal.de/~thoto/statespace/change.php?state=${state}"
+	local url="https://devtal.de/~thoto/statespace/change.php?state=${state}"
 	[ ! -z "${2}" ] && url="${url}&host=${2}"
 
 	/usr/bin/wget --config /usr/local/etc/statespace-wgetrc "${url}" -q -O -
