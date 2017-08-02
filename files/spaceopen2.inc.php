@@ -30,8 +30,8 @@ function print_open($except=false){
 	else $open=get_open();
 
 	echo "<div><div style='float: right;'>";
-	if($open==1) echo '<img src="/~thoto/dt-offen.png" alt="offen">';
-	if($open==2) echo '<img src="/~thoto/dt-geschlossen.png" alt="zu">';
+	if($open==1) echo '<img src="/~thoto/statespace/dt-offen.png" alt="offen">';
+	if($open==2) echo '<img src="/~thoto/statespace/dt-geschlossen.png" alt="zu">';
 	echo "</div>  <div style='text-align:left'> Raum ist ";
 	echo ($open==1)?"offen":(($open==2)?"geschlossen":" EEH.");
 	echo " </div></div>";

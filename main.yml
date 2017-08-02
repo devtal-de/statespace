@@ -95,11 +95,19 @@
       - "change.php"
       - "state.php"
 
+  - name: copy images
+    copy: 
+      src: "{{item}}"
+      dest: "/home/thoto/public_html/statespace/{{item}}"
+      force: yes
+      mode: 0644
+    with_items:
+      - "dt-offen.png"
+      - "dt-geschlossen.png"
+
   - name: create empty index file
     file:
       dest: "/home/thoto/public_html/statespace/index.html"
       state: file
-      owner: thoto
-      group: www-data
       mode: 0644
 

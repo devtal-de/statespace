@@ -5,6 +5,9 @@
 	AuthUserFile /home/thoto/public_html/statespace/.htpasswd
 	Require valid-user
 </Files>
+<Files "state.txt">
+	Deny from all
+</Files>
 # SSLCACertificateFile /...
 #SSLCADNRequestPath /home/thoto/public_html/statespace/certs/
 #SSLRequireSSL
