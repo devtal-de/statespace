@@ -83,7 +83,7 @@
       - "/home/thoto/public_html/statespace/spaceopen2.inc.php"
       - "/var/www/devtal.de/htdocs/blog/wp-content/plugins/spaceopenstatus/spaceopen2.inc.php"
 
-  - name: copy change.php and state.php
+  - name: copy PHP frontend files
     copy: 
       src: "{{item}}"
       dest: "/home/thoto/public_html/statespace/{{item}}"
@@ -94,6 +94,7 @@
     with_items:
       - "change.php"
       - "state.php"
+      - "index.php"
 
   - name: copy images
     copy: 
@@ -105,9 +106,7 @@
       - "dt-offen.png"
       - "dt-geschlossen.png"
 
-  - name: create empty index file
+  - name: remove html index file
     file:
       dest: "/home/thoto/public_html/statespace/index.html"
-      state: file
-      mode: 0644
-
+      state: absent
